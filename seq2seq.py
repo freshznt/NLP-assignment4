@@ -17,21 +17,7 @@ def is_uchar(uchar):
     )
 
 
-with open(r'.\corpus_utf8\雪山飞狐.txt', encoding='utf8', errors='ignore') as f:
-    data = f.readlines()
 
-pattern = re.compile(r'\(.*\)')
-data = [pattern.sub('', lines) for lines in data]
-data = [line.replace('……', '。') for line in data if len(line) > 1]
-data = ''.join(data)
-data = [char for char in data if is_uchar(char)]
-data = ''.join(data)
-
-
-vocab = list(set(data))
-char2id = {c: i for i, c in enumerate(vocab)}
-id2char = {i: c for i, c in enumerate(vocab)}
-numdata = [char2id[char] for char in data]
 
 class TextDataset(Dataset):
     def __init__(self, data, time_steps):
@@ -81,6 +67,22 @@ class Seq2SeqModel(nn.Module):
             return x, new_states
         else:
             return x
+with open(r'.\corpus_utf8\雪山飞狐.txt', encoding='utf8', errors='ignore') as f:
+    data = f.readlines()
+
+pattern = re.compile(r'\(.*\)')
+data = [pattern.sub('', lines) for lines in data]
+data = [line.replace('……', '。') for line in data if len(line) > 1]
+data = ''.join(data)
+data = [char for char in data if is_uchar(char)]
+data = ''.join(data)
+
+
+vocab = list(set(data))
+char2id = {c: i for i, c in enumerate(vocab)}
+id2char = {i: c for i, c in enumerate(vocab)}
+numdata = [char2id[char] for char in data]
+
 
 hidden_size = 128
 hidden_layers = 2

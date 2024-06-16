@@ -17,26 +17,6 @@ def is_uchar(uchar):
         uchar in {'£¬', '¡£', '£º', '£¿', '¡°', '¡±', '£¡', '£»', '¡¢', '¡¶', '¡·', '¡ª¡ª'}
     )
 
-
-
-with open(r'.\corpus_utf8\Ñ©É½·Éºü.txt', encoding='utf8', errors='ignore') as f:
-    data = f.readlines()
-
-pattern = re.compile(r'\(.*\)')
-data = [pattern.sub('', lines) for lines in data]
-data = [line.replace('¡­¡­', '¡£') for line in data if len(line) > 1]
-data = ''.join(data)
-data = [char for char in data if is_uchar(char)]
-data = ''.join(data)
-
-
-vocab = list(set(data))
-char2id = {c: i for i, c in enumerate(vocab)}
-id2char = {i: c for i, c in enumerate(vocab)}
-numdata = [char2id[char] for char in data]
-
-
-
 class TextDataset(Dataset):
     def __init__(self, data, time_steps):
         self.data = torch.tensor(data, dtype=torch.long)
@@ -159,6 +139,21 @@ class TransformerModel(nn.Module):
         mask = torch.triu(torch.ones((size, size)), diagonal=1)
         return mask == 1
 
+
+with open(r'.\corpus_utf8\Ñ©É½·Éºü.txt', encoding='utf8', errors='ignore') as f:
+    data = f.readlines()
+pattern = re.compile(r'\(.*\)')
+data = [pattern.sub('', lines) for lines in data]
+data = [line.replace('¡­¡­', '¡£') for line in data if len(line) > 1]
+data = ''.join(data)
+data = [char for char in data if is_uchar(char)]
+data = ''.join(data)
+
+
+vocab = list(set(data))
+char2id = {c: i for i, c in enumerate(vocab)}
+id2char = {i: c for i, c in enumerate(vocab)}
+numdata = [char2id[char] for char in data]
 
 num_layers = 8
 num_model = 128
